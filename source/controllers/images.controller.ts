@@ -83,6 +83,36 @@ export const populateTables = async (req: Request, res: Response) => {
     }
 }
 
+export const getBreeds = async (req: Request, res: Response) => {
+    try {
+        const client = await pool.connect();
+        const breeds_sql = `SELECT name, breed_id, COUNT(breed_id) FROM image_breed LEFT JOIN breed
+            USING (breed_id) GROUP BY breed_id, name`;
+        let breedsResult = await client.query(breeds_sql);
+        client.release();
+        return res.status(200).json({status: 200, result: breedsResult.rows});
+    }
+    catch(err) {
+        console.log(err);
+        return res.status(500).json({status: 500, message: 'Server Error.'});
+    }
+}
+
+export const getCategories = async (req: Request, res: Response) => {
+    try {
+        const client = await pool.connect();
+        const categories_sql = `SELECT name, category_id, COUNT(category_id) FROM image_category LEFT JOIN category
+            USING (category_id) GROUP BY category_id, name`;
+        let categoriesResult = await client.query(categories_sql);
+        client.release();
+        return res.status(200).json({status: 200, result: categoriesResult.rows});
+    }
+    catch(err) {
+        console.log(err);
+        return res.status(500).json({status: 500, message: 'Server Error.'});
+    }
+}
+
 export const getAllImages = async (req: Request, res: Response) => {
     try {
         const client = await pool.connect();
@@ -132,8 +162,11 @@ export const getLimitedImages = async (req: Request, res: Response) => {
             imagesResult.rows.splice(i, 1, image_to_set);
         }
 
+        let count_sql = `SELECT COUNT(*) FROM image`;
+        const countResult = await client.query(count_sql);
+
         client.release();
-        return res.status(200).json({status: 200, result: imagesResult.rows, row_count: imagesResult.rowCount});
+        return res.status(200).json({status: 200, result: imagesResult.rows, row_count: countResult.rows[0].count});
     }
     catch(err) {
         console.log(err);
