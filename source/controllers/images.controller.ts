@@ -50,6 +50,7 @@ export const populateTables = async (req: Request, res: Response) => {
                             let imageBreedResult = await client.query(image_breed_sql);
                         }
                         img_count++;
+                        console.log('Img #', img_count);
                     })
                     .catch(err => {
                         console.log(err);
@@ -66,6 +67,7 @@ export const populateTables = async (req: Request, res: Response) => {
                             let imageCategoryResult = await client.query(image_category_sql);
                         }
                         img_count++;
+                        console.log('Img #', img_count);
                     })
                     .catch(err => {
                         console.log(err);
